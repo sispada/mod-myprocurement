@@ -20,50 +20,88 @@ export default {
 				),
 		},
 
-		// pagename
-		// {
-		// 	path: "pagename",
-		// 	component: () =>
-		// 		import(
-		// 			/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/pagename/index.vue"
-		// 		),
-		// 	children: [
-		// 		{
-		// 			path: "",
-		// 			name: "myprocurement-pagename",
-		// 			component: () =>
-		// 				import(
-		// 					/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/pagename/crud/data.vue"
-		// 				),
-		// 		},
+		// auction
+		{
+			path: "auction",
+			component: () =>
+				import(
+					/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/auction/index.vue"
+				),
+			children: [
+				{
+					path: "",
+					name: "myprocurement-auction",
+					component: () =>
+						import(
+							/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/auction/crud/data.vue"
+						),
+				},
 
-		// 		{
-		// 			path: "create",
-		// 			name: "myprocurement-pagename-create",
-		// 			component: () =>
-		// 				import(
-		// 					/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/pagename/crud/create.vue"
-		// 				),
-		// 		},
+				{
+					path: "create",
+					name: "myprocurement-auction-create",
+					component: () =>
+						import(
+							/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/auction/crud/create.vue"
+						),
+				},
 
-		// 		{
-		// 			path: ":pagename/edit",
-		// 			name: "myprocurement-pagename-edit",
-		// 			component: () =>
-		// 				import(
-		// 					/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/pagename/crud/edit.vue"
-		// 				),
-		// 		},
+				{
+					path: ":auction/edit",
+					name: "myprocurement-auction-edit",
+					component: () =>
+						import(
+							/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/auction/crud/edit.vue"
+						),
+				},
 
-		// 		{
-		// 			path: ":pagename/show",
-		// 			name: "myprocurement-pagename-show",
-		// 			component: () =>
-		// 				import(
-		// 					/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/pagename/crud/show.vue"
-		// 				),
-		// 		},
-		// 	],
-		// },
+				{
+					path: ":auction/show",
+					name: "myprocurement-auction-show",
+					component: () =>
+						import(
+							/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/auction/crud/show.vue"
+						),
+				},
+			],
+		},
+
+		// history
+		{
+			path: "history",
+			component: () =>
+				import(
+					/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/history/index.vue"
+				),
+			children: [
+				{
+					path: "",
+					name: "myprocurement-history",
+					component: () =>
+						import(
+							/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/history/crud/data.vue"
+						),
+				},
+
+				{
+					path: ":history/show",
+					name: "myprocurement-history-show",
+					component: () =>
+						import(
+							/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/history/crud/show.vue"
+						),
+				},
+			],
+		},
+
+		// report
+		{
+			path: "report",
+			name: "myprocurement-report",
+			component: () =>
+				import(
+					/* webpackChunkName: "myprocurement" */ "@modules/myprocurement/frontend/pages/report/index.vue"
+				),
+		},
 	],
 };
