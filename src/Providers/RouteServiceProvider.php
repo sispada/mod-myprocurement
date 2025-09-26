@@ -44,9 +44,9 @@ class RouteServiceProvider extends ServiceProvider
     {
         // $domain = Cache::flexible('myprocurement-domain', [60, 3600], function() {
         //    try {
-        //        return optional(DB::table('system_modules')->where('slug', 'myprocurement')->first())->domain ?: 'backend';
+        //        return optional(DB::table('system_modules')->where('slug', 'myprocurement')->first())->domain ?: null;
         //    } catch (\Exception $e) {
-        //        return 'backend';
+        //        return null;
         //    }
         // });
 
@@ -57,7 +57,7 @@ class RouteServiceProvider extends ServiceProvider
         //        return null;
         //    }
         // });
-        
+
         // Route::domain($domain . '.' . env('APP_URL'))
         //     ->middleware('web')
         //     ->prefix($prefix)
@@ -74,23 +74,23 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes(): void
     {
-        $domain = Cache::flexible('myprocurement-domain', [60, 3600], function() {
+        $domain = Cache::flexible('myprocurement-domain', [60, 3600], function () {
             try {
-                return optional(DB::table('system_modules')->where('slug', 'myprocurement')->first())->domain ?: 'backend';
+                return optional(DB::table('system_modules')->where('slug', 'myprocurement')->first())->domain ?: null;
             } catch (\Exception $e) {
-                return 'backend';
+                return null;
             }
         });
 
-        $prefix = Cache::flexible('myprocurement-prefix', [60, 3600], function() {
+        $prefix = Cache::flexible('myprocurement-prefix', [60, 3600], function () {
             try {
                 return optional(DB::table('system_modules')->where('slug', 'myprocurement')->first())->prefix ?: null;
             } catch (\Exception $e) {
                 return null;
             }
         });
-        
-        Route::domain($domain . '.' . env('APP_URL'))
+
+        Route::domain($domain ? $domain . '.' . env('APP_URL') : env('APP_URL'))
             ->prefix($prefix . '/api')
             ->middleware(['api', 'auth:sanctum'])
             ->namespace('Module\MyProcurement\Http\Controllers')

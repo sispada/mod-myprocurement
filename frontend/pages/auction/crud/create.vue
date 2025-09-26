@@ -1,42 +1,47 @@
 <template>
 	<form-create with-helpdesk>
-		<template v-slot:default="{ combos: { workunits }, record }">
+		<template
+			v-slot:default="{ combos: { officers, methods, types, workunits }, record }"
+		>
 			<v-card-text>
 				<v-row dense>
 					<v-col cols="12">
-						<v-text-field
+						<v-textarea
 							label="Nama Paket"
+							rows="2"
 							v-model="record.name"
 							hide-details
-						></v-text-field>
+						></v-textarea>
+					</v-col>
+
+					<v-col cols="12">
+						<v-currency-field
+							label="Pagu"
+							v-model="record.ceiling"
+							hide-details
+						></v-currency-field>
 					</v-col>
 
 					<v-col cols="6">
 						<v-select
-							:items="['CONSTRUCTION', 'NONE-CONSTRUCTION']"
+							:items="types"
 							label="Tipe"
-							v-model="record.type"
+							v-model="record.type_id"
 							hide-details
+							@update:model-value="fetchMinValue($event, record, types)"
 						></v-select>
 					</v-col>
 
 					<v-col cols="6">
 						<v-select
-							:items="[
-								'DIKECUALIKAN',
-								'E-PURCHASING',
-								'TENDER',
-								'TENDER-CEPAT',
-								'PENGADAAN-LANGSUNG',
-								'PENUNJUKAN-LANGSUNG',
-							]"
+							:items="methods"
 							label="Metode"
-							v-model="record.method"
+							v-model="record.method_id"
 							hide-details
 						></v-select>
 					</v-col>
 
-					<v-col cols="6">
+					<v-col cols="4">
 						<v-select
 							:items="[
 								{ title: 'JANUARI', value: 1 },
@@ -58,7 +63,7 @@
 						></v-select>
 					</v-col>
 
-					<v-col cols="6">
+					<v-col cols="2">
 						<v-text-field
 							label="Tahun"
 							v-model="record.year"
@@ -84,19 +89,22 @@
 						></v-select>
 					</v-col>
 
-					<v-col cols="6">
-						<v-currency-field
-							label="Pagu"
-							v-model="record.ceiling"
+					<v-col cols="12" v-if="record.mode === 'PPBJ'">
+						<v-combobox
+							:items="officers"
+							:return-object="false"
+							label="PPBJ"
+							v-model="record.officer_id"
 							hide-details
-						></v-currency-field>
+						></v-combobox>
 					</v-col>
 
 					<v-col cols="12">
 						<v-combobox
 							:items="workunits"
+							:return-object="false"
 							label="Unit Kerja"
-							v-model="record.workunit"
+							v-model="record.workunit_id"
 							hide-details
 						></v-combobox>
 					</v-col>
@@ -109,5 +117,17 @@
 <script>
 export default {
 	name: "myprocurement-auction-create",
+
+	data: () => ({
+		minValue: false,
+	}),
+
+	methods: {
+		fetchMinValue: function (type, record, types) {
+			type = types.find((t) => t.value === type);
+
+			record.mode = record.ceiling <= parseFloat(type.min) ? "PPBJ" : "POKJA";
+		},
+	},
 };
 </script>
