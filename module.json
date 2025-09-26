@@ -1,11 +1,11 @@
 {
-    "authorEmail": "monoland.soft@gmail.com",
-    "authorName": "monoland",
-    "authorVendor": "monosoft",
-    "connection": "platform",
-    "name": "MyProcurement",
-    "namespace": "Module",
-    "priority": 0,
-    "disabled": false,
-    "providers": "Module\\MyProcurement\\Providers\\MyProcurementServiceProvider"   
+	"authorEmail": "monoland.soft@gmail.com",
+	"authorName": "monoland",
+	"authorVendor": "monosoft",
+	"connection": "platform",
+	"name": "MyProcurement",
+	"namespace": "Module",
+	"priority": 3,
+	"disabled": false,
+	"providers": "Module\\MyProcurement\\Providers\\MyProcurementServiceProvider"
 }
