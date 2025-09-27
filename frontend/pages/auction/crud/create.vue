@@ -1,5 +1,5 @@
 <template>
-	<form-create with-helpdesk>
+	<form-create content-type="multipart/form-data" with-helpdesk>
 		<template
 			v-slot:default="{ combos: { officers, methods, types, workunits }, record }"
 		>
@@ -110,6 +110,29 @@
 					</v-col>
 				</v-row>
 			</v-card-text>
+
+			<div class="text-overline px-4">dokumen</div>
+			<v-divider></v-divider>
+
+			<v-card-text>
+				<v-row dense>
+					<v-col
+						v-for="(document, documentIndex) in record.documents"
+						:key="documentIndex"
+						cols="12"
+					>
+						<v-file-input
+							:accept="document.mime"
+							:label="document.name"
+							density="comfortable"
+							v-model="document.fileinput"
+							clearable
+							hide-details
+							show-size
+						></v-file-input>
+					</v-col>
+				</v-row>
+			</v-card-text>
 		</template>
 	</form-create>
 </template>
@@ -127,6 +150,14 @@ export default {
 			type = types.find((t) => t.value === type);
 
 			record.mode = record.ceiling <= parseFloat(type.min) ? "PPBJ" : "POKJA";
+
+			this.$http(`myprocurement/api/fetch-document`, {
+				params: {
+					type_id: type.value,
+				},
+			}).then((res) => {
+				record.documents = res;
+			});
 		},
 	},
 };

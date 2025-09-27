@@ -5,18 +5,21 @@ namespace Module\MyProcurement\Models;
 use Illuminate\Http\Request;
 use Module\System\Traits\HasMeta;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 use Module\System\Traits\Filterable;
 use Module\System\Traits\Searchable;
 use Module\System\Traits\HasPageSetup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
+use Module\Procurement\Models\ProcurementType;
+use Module\Procurement\Models\ProcurementMethod;
+use Module\Procurement\Models\ProcurementBiodata;
 use Module\Procurement\Models\ProcurementWorkunit;
 use Module\Procurement\Models\ProcurementWorkgroup;
 use Module\MyProcurement\Http\Resources\AuctionResource;
-use Module\Procurement\Models\ProcurementBiodata;
-use Module\Procurement\Models\ProcurementMethod;
-use Module\Procurement\Models\ProcurementType;
 
 class MyProcurementAuction extends Model
 {
@@ -90,7 +93,9 @@ class MyProcurementAuction extends Model
             'methods' => ProcurementMethod::forCombo(),
             'officers' => ProcurementBiodata::where('role', 'PPBJ')->forCombo(),
             'workgroups' => ProcurementWorkgroup::forCombo(),
-            'workunits' => optional($request->user()->userable)->workunit_id ? ProcurementWorkunit::where('id', $request->user()->userable->workunit_id)->forCombo() : []
+            'workunits' => optional($request->user()->userable)->workunit_id ?
+                ProcurementWorkunit::where('id', $request->user()->userable->workunit_id)->forCombo() :
+                []
         ];
     }
 
@@ -117,6 +122,44 @@ class MyProcurementAuction extends Model
             ['title' => 'Pagu', 'value' => 'ceiling_formatted'],
             ['title' => 'Unit Kerja', 'value' => 'workunit_name'],
             ['title' => 'Status', 'value' => 'status', 'sortable' => false, 'width' => '170'],
+        ];
+    }
+
+    /**
+     * mapRecordBase function
+     *
+     * @param Request $request
+     * @return array
+     */
+    public static function mapRecordBase(Request $request): array
+    {
+        return [
+            'name' => null,
+            'slug' => null,
+            'mode' => null,
+            'type_id' => null,
+            'method_id' => null,
+            'month' => null,
+            'year' => null,
+            'source' => null,
+            'ceiling' => null,
+            'realization' => null,
+            'officer_id' => null,
+            'workgroup_id' => null,
+            'workunit_id' => null,
+            'workunit_name' => null,
+            'status' => null,
+            'drafted_by' => null,
+            'submitted_by' => null,
+            'qualified_by' => null,
+            'rejected_by' => null,
+            'verified_by' => null,
+            'aborted_by' => null,
+            'evaluated_by' => null,
+            'assignments' => null,
+            'reviews' => null,
+            'documents' => [],
+            'reports' => [],
         ];
     }
 
@@ -228,6 +271,37 @@ class MyProcurementAuction extends Model
         DB::connection($model->connection)->beginTransaction();
 
         try {
+            $randomid = mt_rand(10000, 99999);
+            $documents = [];
+
+            foreach ($request->documents as $document) {
+                if (array_key_exists('fileinput', $document) && File::isFile($document['fileinput'])) {
+                    $filename = str($document['name'])->slug('_')->toString() . $document['extension'];
+                    $filepath = $request->user()->userable->slug . DIRECTORY_SEPARATOR .
+                    $randomid . DIRECTORY_SEPARATOR . $filename;
+
+                    Storage::disk('uploads')
+                        ->put(
+                            $filepath,
+                            file_get_contents($document['fileinput'])
+                        );
+
+                    $path = $filepath;
+                } else {
+                    $path = null;
+                }
+
+                array_push($documents, [
+                    'id' => $document['id'],
+                    'name' => $document['name'],
+                    'mime' => $document['mime'],
+                    'extension' => $document['extension'],
+                    'maxsize' => $document['maxsize'],
+                    'file' => null,
+                    'path' => $path
+                ]);
+            }
+
             $model->name = $request->name;
             $model->slug = sha1(str($request->name)->slug());
             $model->mode = $request->mode;
@@ -241,6 +315,7 @@ class MyProcurementAuction extends Model
             $model->workunit_id = $request->workunit_id;
             $model->workunit_name = optional($workunit)->name;
             $model->status = 'DRAFTED';
+            $model->documents = $documents;
             $model->drafted_by = $request->user()->userable_id;
             $model->save();
 
