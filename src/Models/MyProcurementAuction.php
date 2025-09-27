@@ -220,6 +220,7 @@ class MyProcurementAuction extends Model
             ],
             'workgroup_id' => $model->workgroup_id,
             'workunit_name' => $model->workunit_name,
+            'documents' => $model->documents,
             'status' => $model->status,
         ];
     }
