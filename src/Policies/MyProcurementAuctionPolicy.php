@@ -16,7 +16,7 @@ class MyProcurementAuctionPolicy
         if ($user->hasLicenseAs('myprocurement-superadmin')) {
             return true;
         }
-    
+
         return null;
     }
 
@@ -50,6 +50,17 @@ class MyProcurementAuctionPolicy
     public function update(SystemUser $user, MyProcurementAuction $myProcurementAuction): bool
     {
         return $user->hasPermission('update-myprocurement-auction');
+    }
+
+    /**
+     * Determine whether the user can submitted the model.
+     */
+    public function submitted(SystemUser $user, MyProcurementAuction $myProcurementAuction): bool
+    {
+        return
+            $user->hasLicenseAs('myprocurement-ppk') &&
+            $user->hasPermission('update-myprocurement-auction') &&
+            ($myProcurementAuction->status === 'DRAFTED' || $myProcurementAuction->status === 'REJECTED');
     }
 
     /**

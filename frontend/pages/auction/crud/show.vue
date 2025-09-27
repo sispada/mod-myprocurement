@@ -171,6 +171,16 @@
 						>KIRIM PENGAJUAN</v-btn
 					>
 				</v-col>
+
+				<v-col cols="12" v-else>
+					<v-sheet
+						color="grey-lighten-4"
+						class="text-center text-grey cursor-default py-2 mt-3"
+						rounded="lg"
+						width="100%"
+						>Anda sudah kirim data</v-sheet
+					>
+				</v-col>
 			</v-row>
 		</template>
 	</form-show>

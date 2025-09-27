@@ -114,7 +114,7 @@ class MyProcurementAuction extends Model
         return [
             ['title' => 'Name', 'value' => 'name'],
             ['title' => 'Mode', 'value' => 'mode'],
-            ['title' => 'Pagu', 'value' => 'ceiling'],
+            ['title' => 'Pagu', 'value' => 'ceiling_formatted'],
             ['title' => 'Unit Kerja', 'value' => 'workunit_name'],
             ['title' => 'Status', 'value' => 'status', 'sortable' => false, 'width' => '170'],
         ];
@@ -137,7 +137,8 @@ class MyProcurementAuction extends Model
             'month' => $model->month,
             'year' => $model->year,
             'source' => $model->source,
-            'ceiling' => 'Rp. ' . number_format($model->ceiling, 0, ',', '.'),
+            'ceiling' => floatval($model->ceiling),
+            'ceiling_formatted' => 'Rp. ' . number_format($model->ceiling, 0, ',', '.'),
             'officer_id' => $model->officer_id,
             'workunit' => [
                 'title' => $model->workunit_name,
