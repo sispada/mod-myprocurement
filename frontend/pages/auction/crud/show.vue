@@ -17,7 +17,6 @@
 							rows="2"
 							v-model="record.name"
 							hide-details
-							readonly
 						></v-textarea>
 					</v-col>
 
@@ -26,7 +25,6 @@
 							label="Pagu"
 							v-model="record.ceiling"
 							hide-details
-							readonly
 						></v-currency-field>
 					</v-col>
 
@@ -36,7 +34,7 @@
 							label="Tipe"
 							v-model="record.type_id"
 							hide-details
-							readonly
+							@update:model-value="fetchMinValue($event, record, types)"
 						></v-select>
 					</v-col>
 
@@ -46,57 +44,28 @@
 							label="Metode"
 							v-model="record.method_id"
 							hide-details
-							readonly
 						></v-select>
 					</v-col>
 
 					<v-col cols="4">
 						<v-select
 							:items="[
-								{
-									title: 'JANUARY',
-									value: 1,
-								},
-								{
-									title: 'FEBRUARI',
-									value: 2,
-								},
-								{
-									title: 'MARET',
-									value: 3,
-								},
-								{
-									title: 'APRIL',
-									value: 4,
-								},
+								{ title: 'JANUARI', value: 1 },
+								{ title: 'FEBRUARI', value: 2 },
+								{ title: 'MARET', value: 3 },
+								{ title: 'APRIL', value: 4 },
 								{ title: 'MEI', value: 5 },
 								{ title: 'JUNI', value: 6 },
 								{ title: 'JULI', value: 7 },
-								{
-									title: 'AGUSTUS',
-									value: 8,
-								},
-								{
-									title: 'SEPTEMBER',
-									value: 9,
-								},
-								{
-									title: 'OKTOBER',
-									value: 10,
-								},
-								{
-									title: 'NOVEMBER',
-									value: 11,
-								},
-								{
-									title: 'DESEMBER',
-									value: 12,
-								},
+								{ title: 'AGUSTUS', value: 8 },
+								{ title: 'SEPTEMBER', value: 9 },
+								{ title: 'OKTOBER', value: 10 },
+								{ title: 'NOVEMBER', value: 11 },
+								{ title: 'DESEMBER', value: 12 },
 							]"
-							label="Metode"
+							label="Bulan"
 							v-model="record.month"
 							hide-details
-							readonly
 						></v-select>
 					</v-col>
 
@@ -105,7 +74,6 @@
 							label="Tahun"
 							v-model="record.year"
 							hide-details
-							readonly
 						></v-text-field>
 					</v-col>
 
@@ -124,7 +92,6 @@
 							label="Sumber Dana"
 							v-model="record.source"
 							hide-details
-							readonly
 						></v-select>
 					</v-col>
 
@@ -141,10 +108,10 @@
 					<v-col cols="12">
 						<v-combobox
 							:items="workunits"
+							:return-object="false"
 							label="Unit Kerja"
-							v-model="record.workunit"
+							v-model="record.workunit_id"
 							hide-details
-							readonly
 						></v-combobox>
 					</v-col>
 				</v-row>
@@ -161,11 +128,10 @@
 						cols="12"
 					>
 						<file-upload
-							:accept="document.mime"
 							:label="document.name"
 							:extension="document.extension"
-							:slug="document.slug"
 							v-model="document.path"
+							backend-url="/myprocurement/api/upload-document"
 							density="comfortable"
 							hide-details
 							readonly

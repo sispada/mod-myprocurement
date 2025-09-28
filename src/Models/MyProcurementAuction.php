@@ -213,15 +213,16 @@ class MyProcurementAuction extends Model
             'year' => $model->year,
             'source' => $model->source,
             'ceiling' => floatval($model->ceiling),
+            'ceiling_formatted' => 'Rp. ' . number_format($model->ceiling, 0, ',', '.'),
             'officer_id' => $model->officer_id,
             'workunit' => [
                 'title' => $model->workunit_name,
                 'value' => $model->workunit_id
             ],
-            'workgroup_id' => $model->workgroup_id,
+            'workunit_id' => $model->workunit_id,
             'workunit_name' => $model->workunit_name,
-            'documents' => $model->documents,
             'status' => $model->status,
+            'documents' => $model->documents
         ];
     }
 
