@@ -121,15 +121,19 @@
 						:key="documentIndex"
 						cols="12"
 					>
-						<v-file-input
+						<file-upload
 							:accept="document.mime"
 							:label="document.name"
+							:extension="document.extension"
+							:callback="(res) => (document.path = res.path)"
+							v-model="document.path"
+							backend-url="/myprocurement/api/upload-document"
 							density="comfortable"
-							v-model="document.fileinput"
-							clearable
+							deletable
 							hide-details
-							show-size
-						></v-file-input>
+							readonly
+							uploadable
+						></file-upload>
 					</v-col>
 				</v-row>
 			</v-card-text>

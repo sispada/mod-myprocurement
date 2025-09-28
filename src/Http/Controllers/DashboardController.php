@@ -28,9 +28,8 @@ class DashboardController extends Controller
                     'id' => $document->id,
                     'name' => $document->name,
                     'mime' => $document->mime,
-                    'extension' => '.pdf',
+                    'extension' => optional($document)->extension ?: '.pdf',
                     'maxsize' => $document->maxsize,
-                    'file' => null,
                     'path' => null
                 ]);
 
@@ -39,5 +38,19 @@ class DashboardController extends Controller
         }
 
         return [];
+    }
+
+    public function upload(Request $request)
+    {
+        if ($request->hasFile('file') && $request->file('file')) {
+            return response()->json([
+                'path' => 'xx'
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 422,
+            'message' => 'File tidak ada'
+        ], 422);
     }
 }

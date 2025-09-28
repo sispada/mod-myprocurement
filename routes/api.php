@@ -7,6 +7,7 @@ use Module\MyProcurement\Http\Controllers\MyProcurementHistoryController;
 
 Route::get('dashboard', [DashboardController::class, 'index']);
 Route::get('fetch-document', [DashboardController::class, 'document']);
+Route::post('upload-document', [DashboardController::class, 'upload']);
 
 Route::put('auction/{myProcurementAuction}/submitted', [MyProcurementAuctionController::class, 'submitted']);
 Route::put('auction/{myProcurementAuction}/restore', [MyProcurementAuctionController::class, 'restore']);
