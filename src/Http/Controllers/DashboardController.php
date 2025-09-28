@@ -65,11 +65,11 @@ class DashboardController extends Controller
         ]);
 
         if ($request->hasFile('file') && $request->file('file')) {
-            $userpath = $request->user()->userable->slug . DIRECTORY_SEPARATOR;
-            $filename = $request->slug . DIRECTORY_SEPARATOR . $request->uuid . $request->extension;
-            $filepath = $userpath . $filename;
+            $fileslug = $request->user()->userable->slug . DIRECTORY_SEPARATOR . $request->slug;
+            $filename = $request->uuid . $request->extension;
+            $filepath = $fileslug . DIRECTORY_SEPARATOR . $filename;
 
-            if (Storage::disk('uploads')->put($filepath, $request->file('file'))) {
+            if (Storage::disk('uploads')->putFileAs($fileslug, $request->file('file'), $filename)) {
                 return response()->json([
                     'path' => $filepath
                 ], 200);
@@ -80,5 +80,68 @@ class DashboardController extends Controller
             'status' => 422,
             'message' => 'Upload file bermasalah'
         ], 422);
+    }
+
+    /**
+     * download function
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function download(Request $request)
+    {
+        if (! str($request->path)->contains($request->user()->userable->slug)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'File not found'
+            ], 404);
+        }
+
+        if (!Storage::disk('uploads')->exists($request->path)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'File not found'
+            ], 404);
+        }
+
+        return optional(Storage::disk('uploads'))->download($request->path, 'downloaded-file.pdf', [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="sample.pdf"',
+        ]);
+    }
+
+    /**
+     * destroy function
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function destroy(Request $request)
+    {
+        if (! str($request->path)->contains($request->user()->userable->slug)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'File not found'
+            ], 404);
+        }
+
+        if (!Storage::disk('uploads')->exists($request->path)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'File not found'
+            ], 404);
+        }
+
+        if (Storage::disk('uploads')->delete($request->path)) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Hapus file dari server berhasil.'
+            ], 200);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Hapus file dari server gagal.'
+        ], 500);
     }
 }
