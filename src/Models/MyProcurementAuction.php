@@ -272,37 +272,6 @@ class MyProcurementAuction extends Model
         DB::connection($model->connection)->beginTransaction();
 
         try {
-            $randomid = mt_rand(10000, 99999);
-            $documents = [];
-
-            foreach ($request->documents as $document) {
-                if (array_key_exists('fileinput', $document) && File::isFile($document['fileinput'])) {
-                    $filename = str($document['name'])->slug('_')->toString() . $document['extension'];
-                    $filepath = $request->user()->userable->slug . DIRECTORY_SEPARATOR .
-                    $randomid . DIRECTORY_SEPARATOR . $filename;
-
-                    Storage::disk('uploads')
-                        ->put(
-                            $filepath,
-                            file_get_contents($document['fileinput'])
-                        );
-
-                    $path = $filepath;
-                } else {
-                    $path = null;
-                }
-
-                array_push($documents, [
-                    'id' => $document['id'],
-                    'name' => $document['name'],
-                    'mime' => $document['mime'],
-                    'extension' => $document['extension'],
-                    'maxsize' => $document['maxsize'],
-                    'file' => null,
-                    'path' => $path
-                ]);
-            }
-
             $model->name = $request->name;
             $model->slug = sha1(str($request->name)->slug());
             $model->mode = $request->mode;
@@ -316,7 +285,7 @@ class MyProcurementAuction extends Model
             $model->workunit_id = $request->workunit_id;
             $model->workunit_name = optional($workunit)->name;
             $model->status = 'DRAFTED';
-            $model->documents = $documents;
+            $model->documents = $request->documents;
             $model->drafted_by = $request->user()->userable_id;
             $model->save();
 

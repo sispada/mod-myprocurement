@@ -125,6 +125,7 @@
 							:accept="document.mime"
 							:label="document.name"
 							:extension="document.extension"
+							:slug="document.slug"
 							:callback="(res) => (document.path = res.path)"
 							v-model="document.path"
 							backend-url="/myprocurement/api/upload-document"

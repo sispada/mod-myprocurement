@@ -4,7 +4,9 @@ namespace Module\MyProcurement\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Module\Procurement\Models\ProcurementDoctype;
+use Module\Procurement\Models\ProcurementDocument;
 use Module\Procurement\Models\ProcurementType;
 
 class DashboardController extends Controller
@@ -27,6 +29,7 @@ class DashboardController extends Controller
                 array_push($carry, [
                     'id' => $document->id,
                     'name' => $document->name,
+                    'slug' => $document->slug,
                     'mime' => $document->mime,
                     'extension' => optional($document)->extension ?: '.pdf',
                     'maxsize' => $document->maxsize,
@@ -40,17 +43,42 @@ class DashboardController extends Controller
         return [];
     }
 
+    /**
+     * upload function
+     *
+     * @param Request $request
+     * @return void
+     */
     public function upload(Request $request)
     {
-        if ($request->hasFile('file') && $request->file('file')) {
+        $document = ProcurementDocument::firstWhere('slug', $request->slug);
+
+        if (! $document) {
             return response()->json([
-                'path' => 'xx'
-            ], 200);
+                'status' => 422,
+                'message' => 'Upload file tidak valid'
+            ], 422);
+        }
+
+        $request->validate([
+            'file' => "required|file|max:{$document->maxsize}"
+        ]);
+
+        if ($request->hasFile('file') && $request->file('file')) {
+            $userpath = $request->user()->userable->slug . DIRECTORY_SEPARATOR;
+            $filename = $request->slug . DIRECTORY_SEPARATOR . $request->uuid . $request->extension;
+            $filepath = $userpath . $filename;
+
+            if (Storage::disk('uploads')->put($filepath, $request->file('file'))) {
+                return response()->json([
+                    'path' => $filepath
+                ], 200);
+            }
         }
 
         return response()->json([
             'status' => 422,
-            'message' => 'File tidak ada'
+            'message' => 'Upload file bermasalah'
         ], 422);
     }
 }
