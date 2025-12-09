@@ -21,7 +21,8 @@ class MyProcurementHistoryController extends Controller
         Gate::authorize('view', MyProcurementHistory::class);
 
         return new HistoryCollection(
-            MyProcurementHistory::applyMode($request->mode)
+            MyProcurementHistory::forCurrentUser($request->user())
+                ->applyMode($request->mode)
                 ->filter($request->filters)
                 ->search($request->findBy)
                 ->sortBy($request->sortBy)
